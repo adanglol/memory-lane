@@ -8,7 +8,7 @@
     "start": "concurrently \"npm run client\" \"npm run server\"",
     "client": "cd client && npm start",
     "server": "cd server && npm start",
-    "predeploy": "cd client && npm run predeploy",
+    "predeploy": "cd client && npm run bundle",
     "deploy": "cd client && npm run deploy"
   },
   "keywords": [],
