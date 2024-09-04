@@ -35,7 +35,7 @@ function App() {
       <button style={{ padding: '8px 16px', cursor: 'pointer' }} class="btn btn-info">Sign Up</button>
   </div>
 
-  <h1 className="text-center">{process.env.MONGODB_URI}</h1>
+  <h1 className="text-center">{process.env.REACT_APP_JELLO}</h1>
   
   
   </>);
