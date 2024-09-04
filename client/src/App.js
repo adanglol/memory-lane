@@ -34,6 +34,8 @@ function App() {
       <p style={{ margin: '0 8px 0 0' }}>Don't have an account?</p>
       <button style={{ padding: '8px 16px', cursor: 'pointer' }} class="btn btn-info">Sign Up</button>
   </div>
+
+  <h1 className="text-center">{process.env.MONGODB_URI}</h1>
   
   
   </>);
