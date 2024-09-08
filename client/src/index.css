@@ -1,15 +1,11 @@
 body {
-  margin: 0;
-  background-color:#B7C8B2 !important;
+  margin: 1;
+  background: linear-gradient(to top, #b8421a,#c76f16, #0077ff) !important;
+  background-size: cover !important; /* Ensures the gradient covers the entire element */
+  background-attachment: fixed !important; /* Optional: Fixes the background in place */
+  font-family: "Alegreya Sans", sans-serif !important;
+  color: #ffffff;
+ 
 
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}

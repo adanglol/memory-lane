@@ -1,0 +1,59 @@
+body{
+    font-family: "Alegreya Sans", sans-serif !important;
+    /* background: linear-gradient(90deg, #89e170, #fc3a3a) !important; */
+
+}
+
+
+.cta {
+    background-color: #FFC107 !important;
+   
+    /* padding-left: 20px !important;
+    padding-right: 20px !important;
+    text-decoration: none !important; */
+    border : 1px solid black !important;
+    color:black !important;
+    /* margin-left : 10px !important; */
+}
+
+.cta:hover {
+    background-color: #E97451 !important;
+    color: rgb(255, 255, 255) !important;
+}
+
+.link {
+    /* padding : 10px !important;
+    justify-content: space-between !important;
+    width: 30% !important; */
+}
+
+
+.navbar-nav {
+    gap:3em !important;
+}
+
+.navbar-nav a {
+    align-self: center !important;
+}
+
+#logo {
+    width:2em;
+    max-width: 100%;
+    margin-right : .5em;
+}
+
+.block {
+    max-width: 50% !important;
+    max-height: 50% !important;
+    width:  100em!important;
+    height: 34em !important;
+    background-color: #6a5f75;
+    padding-top: 20em;
+    margin-top:10em;
+    /* margin : 0 auto; */
+}
+
+div.landing-page {
+    margin-top : 10em !important;
+    height : 70vh !important;
+}

@@ -1,8 +1,12 @@
 
 const request = require('supertest');
 const mongoose = require('mongoose');
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../../../.env') });
 const User = require('../Schemas/user');
 const app = require('../index'); // Import app without starting the server
+
+
 
 describe('Auth Endpoints', () => {
     let createdUsers = [];
@@ -43,9 +47,9 @@ describe('Auth Endpoints', () => {
             const res = await request(app)
                 .post('/register')
                 .send({
-                username: 'testuser1234',
-                email: 'newuser@example.com',
-                password: 'Password123!',
+                    username: 'testuser1234',
+                    email: 'newuser@example.com',
+                    password: 'Password123!',
                 });
         
             expect(res.statusCode).toBe(201);
@@ -122,6 +126,62 @@ describe('Auth Endpoints', () => {
 
    
     }); // register endpoint description
-    describe('POST /login',() =>{})
+
+    // Write tests for the login and entries endpoints
+    describe('POST /login',() =>{
+        const mockUser = {
+            username : 'USERTESTER',
+            email : 'usertester@example.com',
+            password:'Iloveyou1!'
+        }
+
+        test('It should login a user successfully with email password', async () =>{
+            const res = await request(app)
+            .post('/login')
+            .send({
+                email:mockUser.email,
+                password:mockUser.password
+            });
+            // Check the response
+            expect(res.statusCode).toBe(200);
+            });
+        
+        test('It should login a user successfully with username password', async () =>{
+            const res = await request(app)
+            .post('/login')
+            .send({
+                username:mockUser.username,
+                password:mockUser.password
+            });
+            // Check the response
+            expect(res.statusCode).toBe(200);
+        });
+
+
+        test('It should not login a user with invalid email',async () =>{
+            const res = await request(app)
+            .post('/login')
+            .send({
+                email:'usertesterexample.com',
+                password:mockUser.password
+            });
+            expect(res.statusCode).toBe(401);
+            expect(res.body.message).toBe('Invalid credentials either email or username');
+        })
+
+        test('It should not login a user with invalid username',async () =>{
+            const res = await request(app)
+            .post('/login')
+            .send({
+                username:'usertester',
+                password:mockUser.password
+            });
+            expect(res.statusCode).toBe(401);
+            expect(res.body.message).toBe('Invalid credentials either email or username');
+        })
+   
+    })
+
+
     describe('POST /entries',() =>{})
 }); //authendpoints description
