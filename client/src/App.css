@@ -21,11 +21,7 @@ body{
     color: rgb(255, 255, 255) !important;
 }
 
-.link {
-    /* padding : 10px !important;
-    justify-content: space-between !important;
-    width: 30% !important; */
-}
+
 
 
 .navbar-nav {
@@ -42,18 +38,29 @@ body{
     margin-right : .5em;
 }
 
-.block {
-    max-width: 50% !important;
-    max-height: 50% !important;
-    width:  100em!important;
-    height: 34em !important;
-    background-color: #6a5f75;
-    padding-top: 20em;
-    margin-top:10em;
-    /* margin : 0 auto; */
-}
+
 
 div.landing-page {
     margin-top : 10em !important;
     height : 70vh !important;
+}
+
+
+div.container {
+    background-color: #83838354;
+    border-radius: 5%;
+}
+
+
+#signup{
+    /* background-color: #0000001b !important; */
+    color:#FFC107 !important;
+    text-decoration: none !important;
+    /* border : 1px solid black !important; */
+}
+
+#signup:hover {
+    /* background-color: #E97451 !important; */
+    color: rgb(0, 0, 0) !important;
+    text-decoration: underline !important;
 }

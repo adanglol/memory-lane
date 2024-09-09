@@ -6,7 +6,11 @@ import '../index.css';  // or the relevant path to your CSS file
 
 import logo from '../img/logo192.png';
 
+import handleLogout from './logout';
+
 export default function NavBar(){
+    const token = sessionStorage.getItem('token');
+
     return (
         <>
             <Navbar bg="dark" variant="dark" expand="lg" className='px-5' id = 'nav' fixed='top'>
@@ -18,7 +22,18 @@ export default function NavBar(){
             <Navbar.Collapse id="navbar-nav" className="justify-content-end">
                 <Nav>
                     <Nav.Link className='fs-2' as= {NavLink} to='/about'>About</Nav.Link>
-                    <Button className = "fs-2 cta" as={NavLink} to='/login'>Get Started</Button>  
+                    {/* {!token} */}
+                    {/* <Button className = "fs-2 cta" as={NavLink} to='/login'>Get Started</Button>  */}
+
+
+                    {!token ? (
+                        <Link to="/login" className="btn fs-2 cta">Get Started</Link>
+                    ) : (
+                        <Link to="/" onClick={handleLogout} className="btn fs-2 cta">Logout</Link>
+                    )}
+                    
+                     
+
                 </Nav>
             </Navbar.Collapse>
             </Navbar>

@@ -5,6 +5,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 // SCHEMAS
 const User = require('./Schemas/user');
@@ -70,6 +71,8 @@ if (require.main === module){
 
 
 app.use(express.json());
+// app.use(cors());
+app.use(cors());
 
 
 app.get('/', (req, res) => {
