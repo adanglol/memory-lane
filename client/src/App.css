@@ -52,14 +52,14 @@ div.container {
 }
 
 
-#signup{
+#below-link{
     /* background-color: #0000001b !important; */
     color:#FFC107 !important;
     text-decoration: none !important;
     /* border : 1px solid black !important; */
 }
 
-#signup:hover {
+#below-link:hover {
     /* background-color: #E97451 !important; */
     color: rgb(0, 0, 0) !important;
     text-decoration: underline !important;
