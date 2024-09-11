@@ -6,43 +6,12 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const cors = require('cors');
-
-// SCHEMAS
-const User = require('./Schemas/user');
-// const Entry = require('./Schemas/diary');
-
-// Load environment variables from the .env file
-const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '../../.env') });
-const port = process.env.PORT || 5000;
-const mongoUri = process.env.MONGODB_URI;
-const app = express();
+const validatePassword = require('./Middleware/validate_password');
+const validateUsername = require('./Middleware/validate_username');
+const isEmail = require('./Middleware/validate_email');
+// const authenticateJWT = require('./Middleware/authenticate_JWT');
 
 
-// Function to check if a string is an email
-const isEmail = (str) => /\S+@\S+\.\S+/.test(str);
-
-function validatePassword(password) {
-  const minLength = 8;
-  const hasUpperCase = /[A-Z]/.test(password);
-  const hasLowerCase = /[a-z]/.test(password);
-  const hasNumbers = /[0-9]/.test(password);
-  const hasSpecialCharacters = /[!@#$%^&*]/.test(password);
-  return password.length >= minLength && hasUpperCase && hasLowerCase && hasNumbers && hasSpecialCharacters;
-}
-
-function validateUsername(username){
-  const minLength = 3;
-  const maxLength = 20;
-  const usernamePattern = /^(?!.*__.*)(?!.*\.\..*)[a-zA-Z0-9._]{3,20}$/;
-  
-  return username.length >= minLength &&
-         username.length <= maxLength &&
-         usernamePattern.test(username);
-}
-
-
-// JWT Authentication Middleware
 const authenticateJWT = (req, res, next) => {
   const token = req.headers['authorization']?.split(' ')[1]; // Assumes token is in the format "Bearer token"
 
@@ -54,6 +23,20 @@ const authenticateJWT = (req, res, next) => {
     next();
   });
 };
+
+const multer = require('multer');
+
+// SCHEMAS
+const User = require('./Schemas/user');
+const Diary = require('./Schemas/diary');
+
+
+// Load environment variables from the .env file
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../../.env') });
+const port = process.env.PORT || 5000;
+const mongoUri = process.env.MONGODB_URI;
+const app = express();
 
 
 // Connect to the MongoDB database with mongoose
@@ -71,8 +54,11 @@ if (require.main === module){
 
 
 app.use(express.json());
-// app.use(cors());
 app.use(cors());
+const upload = multer({storage : multer.memoryStorage()})
+
+
+
 
 
 app.get('/', (req, res) => {
@@ -145,19 +131,41 @@ app.post('/login', async (req, res) => {
     console.error(e);
     res.status(500).json({message: 'Error logging in'});
   }
+});
 
+
+
+// upload audio file
+
+app.post('/upload', authenticateJWT,upload.single('audio'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+
+    const audio = new Diary({
+      filename: req.file.originalname,
+      data: req.file.buffer,
+      contentType: req.file.mimetype,
+      user: req.user.id,
+    });
+
+    await audio.save();
+    res.json({ message: 'File uploaded successfully!' });
+
+     
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error uploading file' });
+  }
 
 });
 
 
 
 
-// app.post('/entries', authenticateJWT ,async (req, res) => {});
 
 
 
 
-module.exports = app;
 
 // Only listen the server if we're not in a test environment
 if (process.env.NODE_ENV !== 'test') {
@@ -165,3 +173,5 @@ if (process.env.NODE_ENV !== 'test') {
       console.log(`Server is running on http://localhost:${port}`);
     });
 }
+
+module.exports = app;

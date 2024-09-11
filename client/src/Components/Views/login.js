@@ -5,8 +5,11 @@ import axios from 'axios';
 // import { Navigate } from 'react-router-dom';
 // import { useEffect } from 'react';
 
+import { useAuth } from '../Auth/AuthProvider';
+
 
 function Login() {
+  const { login } = useAuth();
 
 
   useEffect(() => {
@@ -31,10 +34,9 @@ function Login() {
       });
       console.log('Login successful:', response.data);
       // Handle successful login (e.g., redirect or show a success message)
-      sessionStorage.setItem('token', response.data.token);
-      // Redirect to hub 
+      login(response.data.token);
       navigate('/hub');
-      window.location.reload();
+      // window.location.reload();
     } catch (err) {
       console.error('Error during login:', err);
       setError('Login failed. Please check your credentials.');
