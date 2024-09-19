@@ -31,11 +31,26 @@ export default function NavBar(){
                             <Nav.Link className='fs-2' as= {NavLink} to='/about'>About</Nav.Link>
                             {!isAuthenticated ? (
                                 <>
-                                    <Link to = "/login" className="btn fs-2 cta">Get Started</Link>
+                                    <NavLink
+                                    to = '/login'
+                                    className = {({isActive}) =>
+                                        isActive ? 'btn fs-2 cta active' : 'btn fs-2 cta'
+                                    }
+                                    >
+                                    Get Started
+
+                                    </NavLink>
                                 </>
                             ) : (
                                 <>
-                                    <Link to = "/hub" className="btn fs-2 cta">Hub</Link>
+                                    <NavLink
+                                    to="/hub"
+                                    className={({ isActive }) =>
+                                        isActive ? 'btn fs-2 cta active' : 'btn fs-2 cta'
+                                    }
+                                    >
+                                    Hub
+                                </NavLink>
                                     <Link to = "/" onClick={logout} className="btn fs-2 cta">Logout</Link>
                                 </>
                             )}

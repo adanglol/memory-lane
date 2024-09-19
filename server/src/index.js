@@ -3,23 +3,26 @@
 // Import the required modules
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const validatePassword = require('./Middleware/validate_password');
 const validateUsername = require('./Middleware/validate_username');
 const isEmail = require('./Middleware/validate_email');
-// const authenticateJWT = require('./Middleware/authenticate_JWT');
+
 
 
 const authenticateJWT = (req, res, next) => {
-  const token = req.headers['authorization']?.split(' ')[1]; // Assumes token is in the format "Bearer token"
-
+  // const token = req.headers['authorization']?.split(' ')[1]; // Assumes token is in the format "Bearer token" this is sessionstorage and local storage approach by using headers 
+  const token = req.cookies.accessToken; // Assumes token is in a cookie
   if (!token) return res.sendStatus(401);
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) return res.sendStatus(403);
     req.user = user;
+    console.log('User from token:', user); // Debug statement
+
     next();
   });
 };
@@ -29,6 +32,40 @@ const multer = require('multer');
 // SCHEMAS
 const User = require('./Schemas/user');
 const Diary = require('./Schemas/diary');
+const RefreshToken = require('./Schemas/refreshtoken');
+
+
+const generateAccessToken = (user) => {
+  const payload = { userId: user._id }; // Customize the payload as needed
+  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+};
+
+const generateRefreshToken = async (user) => {
+  const uniqueToken = crypto.randomBytes(64).toString('hex');
+  const expiryDate = new Date();
+  expiryDate.setDate(expiryDate.getDate() + 7); // Set the expiry date to 7 days from now
+  
+  
+
+
+  const existingToken = await RefreshToken.findOne({ user: user._id });
+
+  if (existingToken) {
+    existingToken.token = uniqueToken;
+    existingToken.expiryDate = expiryDate;
+    await existingToken.save();
+    // return uniqueToken;
+  } else {
+    const refreshToken = new RefreshToken({
+      user: user._id,
+      token: uniqueToken,
+      expiryDate
+    });
+    await refreshToken.save();
+    // return uniqueToken;
+  }
+  return uniqueToken;
+}
 
 
 // Load environment variables from the .env file
@@ -54,8 +91,17 @@ if (require.main === module){
 
 
 app.use(express.json());
-app.use(cors());
-const upload = multer({storage : multer.memoryStorage()})
+app.use(cors({
+  origin: 'http://localhost:3000', // Your frontend URL
+  credentials: true
+}));
+app.use(cookieParser());
+const upload = multer(
+  {
+    storage : multer.memoryStorage(),
+    limits : {fileSize: 5 * 1024 * 1024} // 5MB
+
+  })
 
 
 
@@ -121,10 +167,14 @@ app.post('/login', async (req, res) => {
       return res.status(401).json({message: 'Invalid credentials pw'});
     }
 
-
-    const payload = { userId: user._id };
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
-    return res.status(200).json({ token, message: 'Logged in successfully' });
+    // Generate the access token and refresh token
+    const accessToken = generateAccessToken(user);
+    const refreshToken = await generateRefreshToken(user);
+    // Send the access token and refresh token as cookies
+    res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true, sameSite: 'Strict'});
+    res.cookie('accessToken', accessToken, { httpOnly: true ,secure: true, sameSite: 'Strict'});
+    
+    res.status(200).json({message: 'Logged in successfully'});
 
 
   } catch(e) {
@@ -133,19 +183,88 @@ app.post('/login', async (req, res) => {
   }
 });
 
+// need to work on logout
+app.post('/logout', async (req, res) => {
+  try {
+    res.clearCookie('refreshToken');
+    res.clearCookie('accessToken');
+    // console.log(req.cookies);
+    // console.log(res.cookies);
+    res.status(200).json({message: 'Logged out successfully'});
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({message: 'Error logging out'});
+  }
+  
+});
+
+app.get('/check-auth', async (req, res) => {
+  try {
+
+    // console.log('Cookies:', req.cookies)
+    // Validate access token (this example assumes it's in the Authorization header)
+    const token = req.cookies.accessToken;
+    if (!token) {
+      return res.status(401).json({ isAuthenticated: false });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.userId);
+    
+    if (!user) {
+      return res.status(401).json({ isAuthenticated: false });
+    }
+
+    res.status(200).json({ isAuthenticated: true });
+  } catch (error) {
+    res.status(401).json({ isAuthenticated: false });
+  }
+});
 
 
 // upload audio file
-
 app.post('/upload', authenticateJWT,upload.single('audio'), async (req, res) => {
+  // const { title, description,userId } = req.body;
+  const { title, description,} = req.body;
+
+  const userId = req.user.userId;
+
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
   try {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+    // console.log(req..id);
+    // check if existing memory for today or post 
+    const existingMemory = await Diary.findOne({ user: userId,
+      createdAt: 
+      { $gte: today ,
+        $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000) }
+      });
+
+    if (existingMemory) {
+      console.log('Memory already exists for today');
+      return res.json({postedToday: true});
+    }
+
+    // Check if the file size is greater than 5MB
+
+    if (req.file.size > 5 * 1024 * 1024) {
+      return res.status(400).json({ message: 'File exceeds 5-minute limit' });
+    }
+
+
+
+    // console.log('User ID:', userId);
 
     const audio = new Diary({
       filename: req.file.originalname,
       data: req.file.buffer,
       contentType: req.file.mimetype,
-      user: req.user.id,
+      user: userId,
+      title: title,
+      description:description
     });
 
     await audio.save();
@@ -160,10 +279,67 @@ app.post('/upload', authenticateJWT,upload.single('audio'), async (req, res) => 
 });
 
 
+// get all audio files aka memories
+
+app.get('/memories', authenticateJWT, async (req, res) => {
+  try {
+    console.log('User ID:', req.user.id);
+    const userId = req.user.userId;
+    const memories = await Diary.find({ user: userId });
+
+    const memoriesWithLinks = memories.map(memory => ({
+      id: memory._id,
+      title: memory.title,
+      description: memory.description,
+      link: `http://localhost:5000/memories/${memory._id}`,
+      createdAt: memory.createdAt
+    }));
 
 
+    res.json(memoriesWithLinks);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error fetching audio files' });
+  }
+});
 
 
+// get audio file by id
+app.get('/memories/:id', authenticateJWT, async (req, res) => {
+  try {
+    const memory = await Diary.findById(req.params.id);
+    if (!memory) return res.status(404).json({ message: 'Memory not found' });
+
+    res.json({
+      id: memory._id,
+      title: memory.title,
+      description: memory.description,
+      createdAt: memory.createdAt,
+      audio: {
+        url: `http://localhost:5000/memories/${memory._id}/audio`, // URL to fetch the audio
+        contentType: memory.contentType // MIME type for the audio
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error fetching memory details' });
+  }
+});
+
+
+// serve audio file - memory
+app.get('/memories/:id/audio', authenticateJWT, async (req, res) => {
+  try {
+    const memory = await Diary.findById(req.params.id);
+    if (!memory) return res.status(404).json({ message: 'Memory not found' });
+
+    res.set('Content-Type', memory.contentType); // Set the appropriate MIME type
+    res.send(memory.data); // Send the audio buffer
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error fetching audio file' });
+  }
+});
 
 
 

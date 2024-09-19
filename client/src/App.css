@@ -22,6 +22,11 @@ body{
 }
 
 
+.cta.active {
+    background-color: #E97451 !important;
+}
+
+
 
 
 .navbar-nav {
@@ -51,6 +56,24 @@ div.container {
     border-radius: 5%;
 }
 
+div.my-5.container.about {
+    background-color: #e3cfcf00 !important;
+    font-size: 1.3em !important;
+}
+div.card {
+    background-color: #5e7fa4 !important;
+    box-shadow: 0 0 10px rgba(0.1, 0.1, .1, 0.5); /* Optional: add a subtle shadow */
+
+}
+
+div.container {
+    background-color: #83838354;
+}
+
+/* #root > div > div > ul > li > a {
+    /* color: #FFC107 !important; */
+    /* background-color: black !important; */
+
 
 #below-link{
     /* background-color: #0000001b !important; */
@@ -64,3 +87,24 @@ div.container {
     color: rgb(0, 0, 0) !important;
     text-decoration: underline !important;
 }
+
+
+div.p-4.rounded.memory {
+    background-color: #5e7fa4 !important;
+    /* font-size: 1.3em !important;
+    padding : 3em !important;
+    width : 50% !important; */
+    max-width: 65%; /* Adjust as needed */
+    width: 100%;
+    margin: 0 auto; /* Center the container */
+    overflow: hidden; /* Hide any overflow */
+    box-shadow: 0 0 10px rgba(0.1, 0.1, .1, 0.5); /* Optional: add a subtle shadow */
+}
+
+/* Styles for the audio player */
+audio {
+    width: 100%; /* Make the audio player responsive */
+    max-width: 600px; /* Set a maximum width for larger screens */
+    display: block; /* Ensure it behaves as a block element */
+    margin: 0 auto; /* Center the audio player */
+  }

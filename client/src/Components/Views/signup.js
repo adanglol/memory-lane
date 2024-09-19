@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useAuth } from  '../Auth/AuthProvider';
 
 
 
 function SignUp(){
-
   useEffect(() => {
     document.title = "Sign Up | Memory Lane";
     window.scrollTo(0, 0);
@@ -16,20 +15,18 @@ function SignUp(){
   const [password,setPassword] = useState('');
   const [error,setError] = useState('');
   const navigate = useNavigate();
+  const {register} = useAuth();
 
   const handleSignUp = async (e) => {
-    // e.preventDefault();
     e.preventDefault();
     setError(''); // Reset error
 
     try {
-      const response = await axios.post('http://localhost:5000/register', {
-        'email' : email,
-        'username' : username,
-        'password' : password
-      });
-
-      console.log('Signup successful:', response.data);
+      await register({
+        email : email,
+        username : username,
+        password : password
+      })
       alert('Signup successful');
       setEmail('');
       setUsername('');
@@ -58,6 +55,8 @@ function SignUp(){
                 id="email"
                 placeholder="Enter your email"
                 title = "Enter a valid email address"
+                name = "email"
+                autoComplete="email"
                 value={email}
                 onChange = {(e) => setEmail(e.target.value)} 
                 required
@@ -71,6 +70,8 @@ function SignUp(){
                 id="username"
                 placeholder="Enter your username"
                 title="3-20 chars, letters, numbers, '.' or '_', no consecutive '.' or '_'" 
+                name="username"
+                autoComplete="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
@@ -84,6 +85,8 @@ function SignUp(){
                 id="password"
                 placeholder="Enter your password" 
                 title="At least 8 characters 1 uppercase, 1 lowercase, 1 number and 1 special character"
+                name="password"
+                autoComplete="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required

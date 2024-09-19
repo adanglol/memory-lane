@@ -1,17 +1,9 @@
 
 import {React,  useState, useEffect}from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-// import { Navigate } from 'react-router-dom';
-// import { useEffect } from 'react';
-
 import { useAuth } from '../Auth/AuthProvider';
 
-
 function Login() {
-  const { login } = useAuth();
-
-
   useEffect(() => {
     document.title = "Login | Memory Lane";
     window.scrollTo(0, 0);
@@ -21,22 +13,18 @@ function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const {login } = useAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(''); // Reset error
-
     try {
-      const response = await axios.post('http://localhost:5000/login', {
+      await login({
         username : emailOrUsername,
         email : emailOrUsername,
         password
-      });
-      console.log('Login successful:', response.data);
-      // Handle successful login (e.g., redirect or show a success message)
-      login(response.data.token);
-      navigate('/hub');
-      // window.location.reload();
+      }, {withCredentials: true});
+      // navigate('/hub');
     } catch (err) {
       console.error('Error during login:', err);
       setError('Login failed. Please check your credentials.');
@@ -56,6 +44,8 @@ function Login() {
               id="emailOrUsername"
               placeholder="Enter your email or username"
               title = "Please enter your email or username"
+              name = "emailOrUsername"
+              autoComplete="emailOrUsername"
               value={emailOrUsername}
               onChange={(e) => setEmailOrUsername(e.target.value)}
               required
@@ -69,6 +59,8 @@ function Login() {
               id="password"
               placeholder="Enter your password"
               title = "Please enter your password"
+              name = "password"
+              autoComplete="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
