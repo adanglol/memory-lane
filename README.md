@@ -160,6 +160,15 @@ install the dependencies for both the client and server directories in your term
 to also note that upload will also include the audio file as well
 
 
+# Final Notes 
+- This project is still in development and will be updated with more features and improvements in the future.
+- This project was created as a personal project to learn more about full-stack development and to create a platform for users to reflect on their day.
+- Hopefully get this project deployed on Heroku or AWS in the future.
+- Learned a lot about React Native, Node.js, Express, MongoDB, and audio recording in this project.
+- Feel free to contribute to this project by forking the repository and submitting a pull request.
+- If you have any questions or feedback, please feel free to reach out to me at adraging@gmail.com
+
+
 
 
 # Attributions
