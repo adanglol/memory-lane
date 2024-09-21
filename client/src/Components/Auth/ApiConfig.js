@@ -6,7 +6,7 @@ axios.defaults.withCredentials = true;
 
 // Create an Axios instance
 const api = axios.create({
-  baseURL: 'http://localhost:5000',
+  baseURL: 'https://memory-lane-t90a.onrender.com/',
   withCredentials: true, // Include cookies with requests
 });
 
