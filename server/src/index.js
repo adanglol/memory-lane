@@ -171,8 +171,8 @@ app.post('/login', async (req, res) => {
     const accessToken = generateAccessToken(user);
     const refreshToken = await generateRefreshToken(user);
     // Send the access token and refresh token as cookies
-    res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true, sameSite: 'Strict'});
-    res.cookie('accessToken', accessToken, { httpOnly: true ,secure: true, sameSite: 'Strict'});
+    res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true, sameSite: 'None'});
+    res.cookie('accessToken', accessToken, { httpOnly: true ,secure: true, sameSite: 'None'});
     
     res.status(200).json({message: 'Logged in successfully'});
 
