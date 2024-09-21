@@ -1,5 +1,7 @@
 # Memory Lane - Audio Diary Web Application
 
+# Check it out here : https://adanglol.github.io/memory-lane/
+
 # Created by: Aaron Dangc or adanglol
 
 # Table of Contents
@@ -53,6 +55,7 @@ Memory Lane is a web application that allows users to record audio diaries. User
 - Authentication: JWT and bcrypt
 - Audio Recording: MediaRecorder API
 - Testing: Jest
+- Deployment : Render 
 
 # Getting Started
 
@@ -65,8 +68,8 @@ Memory Lane is a web application that allows users to record audio diaries. User
 # Setup
 
 1. Clone the repository
-- git clone <repository-url>
-- cd <repository-name>
+- git clone repository_url
+- cd memory-lane
 
 2. In the root directory, should see the client and server directories and package.json files now,
 install the dependencies for both the client and server directories in your terminal as well as the root directory :
