@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
 
     const register = async(credentials) => {
         try {
-            await api.post('/register',credentials);
+            await api.post('/register',credentials,{withCredentials: true});
         } catch(error) {
             console.error("Registration failed", error);
         }
@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }) => {
     const checkAuth = async() => {
         try {
             const response = await api.get('/check-auth', {withCredentials: true});
-            // setIsAuthenticated(response.data.isAuthenticated);
+            setIsAuthenticated(response.data.isAuthenticated);
             console.log(response.data.isAuthenticated);
             if(response.data.isAuthenticated) {
                 setIsAuthenticated(true);
