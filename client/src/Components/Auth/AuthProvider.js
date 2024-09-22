@@ -14,7 +14,9 @@ export const AuthProvider = ({ children }) => {
 
     const register = async(credentials) => {
         try {
-            await api.post('/register',credentials,{withCredentials: true});
+            await api.post('/register',credentials);
+            alert('Signup successful');
+            navigate('/login');
         } catch(error) {
             console.error("Registration failed", error);
         }
@@ -47,13 +49,8 @@ export const AuthProvider = ({ children }) => {
         try {
             const response = await api.get('/check-auth', {withCredentials: true});
             setIsAuthenticated(response.data.isAuthenticated);
-            console.log(response.data.isAuthenticated);
             if(response.data.isAuthenticated) {
-                setIsAuthenticated(true);
                 navigate('/hub');
-
-            } else {
-                setIsAuthenticated(false);
             }
         } catch(error) {
             console.error("Check auth failed", error);
@@ -64,6 +61,9 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         checkAuth();
     },[]);
+
+
+    
     return (
         <AuthContext.Provider value={{ isAuthenticated, logout,login,register }}>
             {children}

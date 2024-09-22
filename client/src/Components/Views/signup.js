@@ -27,11 +27,9 @@ function SignUp(){
         username : username,
         password : password
       })
-      alert('Signup successful');
       setEmail('');
       setUsername('');
       setPassword('');
-      // navigate('/login');
     } catch (err) {
       console.error('Error during signup:', err);
       // setError('Signup failed. Please check your credentials.');
