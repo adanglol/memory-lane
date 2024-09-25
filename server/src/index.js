@@ -71,7 +71,7 @@ const generateRefreshToken = async (user) => {
 // Load environment variables from the .env file
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '../../.env') });
-const port = process.env.PORT || 5000;
+const port = 5000;
 const mongoUri = process.env.MONGODB_URI;
 const app = express();
 
@@ -92,7 +92,7 @@ if (require.main === module){
 
 app.use(express.json());
 app.use(cors({
-  origin: 'https://adanglol.github.io/memory-lane/', // Your frontend URL
+  origin: 'http://localhost:3000/memory-lane/', // Your frontend URL
   credentials: true
 }));
 app.use(cookieParser());
@@ -291,7 +291,7 @@ app.get('/memories', authenticateJWT, async (req, res) => {
       id: memory._id,
       title: memory.title,
       description: memory.description,
-      link: `https://memory-lane-t90a.onrender.com//memories/${memory._id}`,
+      link: `http://localhost:5000//memories/${memory._id}`,
       createdAt: memory.createdAt
     }));
 
@@ -316,7 +316,7 @@ app.get('/memories/:id', authenticateJWT, async (req, res) => {
       description: memory.description,
       createdAt: memory.createdAt,
       audio: {
-        url: `https://memory-lane-t90a.onrender.com/memories/${memory._id}/audio`, // URL to fetch the audio
+        url: `http://localhost:5000/memories//${memory._id}/audio`, // URL to fetch the audio
         contentType: memory.contentType // MIME type for the audio
       }
     });
@@ -344,7 +344,7 @@ app.get('/memories/:id/audio', authenticateJWT, async (req, res) => {
 
 
 // Only listen the server if we're not in a test environment
-if (process.env.NODE_ENV !== 'development' || process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV  == 'development' || process.env.NODE_ENV === 'production') {
     app.listen(port, () => {
       console.log(`Server is running on http://localhost:${port}`);
 
